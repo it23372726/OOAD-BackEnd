@@ -4,6 +4,7 @@ import com.example.auto_service_dambulla_api.services.item.dtos.ItemDTO;
 import com.example.auto_service_dambulla_api.services.supplier.Supplier;
 import com.example.auto_service_dambulla_api.services.supplier.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,6 +36,22 @@ public class ItemService {
 
         return itemRepository.save(newItem);
     }
+    public Item deleteItem(Long itemId) {
+        // Find the item by itemId
+        Optional<Item> optionalItem = itemRepository.findById(itemId);
+
+        if (optionalItem.isPresent()) {
+            // If item exists, delete it
+            Item deletedItem = optionalItem.get();
+            itemRepository.deleteById(itemId);
+            return deletedItem; // Return the deleted item details
+        } else {
+            // If item does not exist, return null
+            return null;
+        }
+    }
+
+
 
     public List<Item> getLowStockItems() {
         return itemRepository.findAll().stream()

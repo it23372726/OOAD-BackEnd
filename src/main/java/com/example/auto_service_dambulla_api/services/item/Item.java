@@ -2,10 +2,11 @@ package com.example.auto_service_dambulla_api.services.item;
 
 import com.example.auto_service_dambulla_api.services.supplier.Supplier;
 import jakarta.persistence.*;
+import org.springframework.http.HttpStatusCode;
 
 @Entity
 @Table(name = "items")
-public class Item {
+public class Item  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long itemId;

@@ -14,6 +14,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @CrossOrigin
     // Sign-Up (User Registration)
     @PostMapping("/signup")
     public ResponseEntity<String> registerUser(@RequestBody UserRegistrationRequest request) {
@@ -26,12 +27,14 @@ public class UserController {
         return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
     }
 
+    @CrossOrigin
     @PostMapping("/signin")
     public ResponseEntity<String> signin(@RequestBody UserRegistrationRequest request) {
         UserDetails user = userService.loadUserByUsername(request.getUsername());
         return new ResponseEntity<>(user.getUsername(), HttpStatus.CREATED);
     }
 
+    @CrossOrigin
     // Get User by ID
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
@@ -40,6 +43,7 @@ public class UserController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @CrossOrigin
     // Delete User by ID
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {

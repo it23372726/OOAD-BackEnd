@@ -1,6 +1,7 @@
 package com.example.auto_service_dambulla_api.services.restock;
 
 import com.example.auto_service_dambulla_api.services.item.Item;
+import com.example.auto_service_dambulla_api.services.item.ItemRepository;
 import com.example.auto_service_dambulla_api.services.item.ItemService;
 import com.example.auto_service_dambulla_api.services.restock.dtos.RestockDTO;
 import com.example.auto_service_dambulla_api.services.restock.dtos.RestockItemType;
@@ -23,6 +24,8 @@ public class RestockService {
     private RestockItemRepository restockItemRepository;
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private ItemRepository itemRepository;
 
     public Restock createRestockingOrder(RestockDTO restockDTO) {
         // Validate the DTO
@@ -37,9 +40,24 @@ public class RestockService {
         restock.setInstruction(restockDTO.getInstruction());
         restock.setOrderDate(LocalDate.now());
         restock.setSupplier(supplier);
+        List<RestockItemType> items = restockDTO.getItemTypes();
+        List<Item> itemsToUpdate = items.stream()
+                .map(oneItem -> {
+                    Item item = itemRepository.findById(oneItem.getItemId())
+                            .orElseThrow(() -> new RuntimeException("No such item: " + oneItem.getItemId()));
+                    // Update the amount of the item
+                    item.setQuantityInStock(item.getQuantityInStock() + oneItem.getAmount());
+                    return item;
+                })
+                .toList();
+        itemRepository.saveAll(itemsToUpdate);
+
+
 
         // Save the Restock entity
         Restock savedRestock = restockRepository.save(restock);
+
+
 
         // Create and save RestockItems
         List<RestockItem> restockItems = restockDTO.getItemTypes().stream()

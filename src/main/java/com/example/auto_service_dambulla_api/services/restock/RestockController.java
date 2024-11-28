@@ -14,11 +14,13 @@ public class RestockController {
     @Autowired
     private RestockService restockService;
 
-    @PostMapping
+    @CrossOrigin
+    @PostMapping("/create")
     public ResponseEntity<Restock> createRestockingOrder(@RequestBody RestockDTO order) {
         return new ResponseEntity<>(restockService.createRestockingOrder(order), HttpStatus.CREATED);
     }
 
+    @CrossOrigin
     @GetMapping
     public ResponseEntity<List<Restock>> getAllRestockingOrders() {
         return new ResponseEntity<>(restockService.getAllOrders(), HttpStatus.OK);

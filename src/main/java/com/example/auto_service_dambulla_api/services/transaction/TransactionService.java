@@ -1,8 +1,10 @@
 package com.example.auto_service_dambulla_api.services.transaction;
 
 import com.example.auto_service_dambulla_api.services.item.Item;
+import com.example.auto_service_dambulla_api.services.item.ItemRepository;
 import com.example.auto_service_dambulla_api.services.item.ItemService;
 import com.example.auto_service_dambulla_api.services.restock.RestockItem;
+import com.example.auto_service_dambulla_api.services.restock.dtos.RestockItemType;
 import com.example.auto_service_dambulla_api.services.transaction.dtos.TransactionDTO;
 import com.example.auto_service_dambulla_api.services.transaction.dtos.TransactionItemType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ public class TransactionService {
     private TransactonItemRepository transactonItemRepository;
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private ItemRepository itemRepository;
     // Add a new transaction
     public Transaction addTransaction(TransactionDTO transactionDTO) {
 
@@ -30,6 +34,18 @@ public class TransactionService {
         transaction.setCost(transactionDTO.getCost());
         transaction.setTransactionDate(LocalDate.now());
 
+        List<TransactionItemType> items = transactionDTO.getTransactionItemTypes();
+        List<Item> itemsToUpdate = items.stream()
+                .map(oneItem -> {
+                    Item item = itemRepository.findById(oneItem.getId())
+                            .orElseThrow(() -> new RuntimeException("No such item: " + oneItem.getId()));
+                    // Update the amount of the item
+                    item.setQuantityInStock(item.getQuantityInStock() - oneItem.getAmount());
+                    return item;
+                })
+                .toList();
+        itemRepository.saveAll(itemsToUpdate);
+
         // Save the Restock entity
         Transaction savedTransaction = transactionRepository.save(transaction);
 
@@ -37,6 +53,12 @@ public class TransactionService {
         List<TransactionItem> transItems = transactionDTO.getTransactionItemTypes().stream()
                 .map(itemType -> createTransItem(savedTransaction, itemType))
                 .toList();
+
+
+
+
+
+
         transactonItemRepository.saveAll(transItems);
 
         return savedTransaction;

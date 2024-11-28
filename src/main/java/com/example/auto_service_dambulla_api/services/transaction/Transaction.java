@@ -1,11 +1,16 @@
 package com.example.auto_service_dambulla_api.services.transaction;
 
+import com.example.auto_service_dambulla_api.services.item.Item;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "transactions")
 public class Transaction {

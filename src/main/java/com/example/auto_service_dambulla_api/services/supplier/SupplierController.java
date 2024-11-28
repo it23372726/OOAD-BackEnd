@@ -14,16 +14,19 @@ public class SupplierController {
     @Autowired
     private SupplierService supplierService;
 
+    @CrossOrigin
     @PostMapping
     public ResponseEntity<Supplier> addSupplier(@RequestBody SupplierDTO supplier) {
         return new ResponseEntity<>(supplierService.addSupplier(supplier), HttpStatus.CREATED);
     }
 
+    @CrossOrigin
     @GetMapping
     public ResponseEntity<List<Supplier>> getAllSuppliers() {
         return new ResponseEntity<>(supplierService.getAllSuppliers(), HttpStatus.OK);
     }
 
+    @CrossOrigin
     @GetMapping("/{id}")
     public ResponseEntity<Supplier> getSupplierById(@PathVariable Long id) {
         return supplierService.getSupplierById(id)
@@ -31,6 +34,7 @@ public class SupplierController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @CrossOrigin
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSupplierById(@PathVariable Long id){
         supplierService.deleteSupplierById(id);
